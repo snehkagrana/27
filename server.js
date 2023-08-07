@@ -158,6 +158,29 @@ app.get("/server/login", (req, res) => {
             };
             return res.json(redir);
         }
+
+        User.findOne({ username: req.user.username }, async (err, doc) => {
+            if (err) throw err;
+            if (doc) {
+                const today = new Date().toISOString().split("T")[0];
+
+                if (!isNextDay(doc.lastCompletedDay)) {
+                    doc.streak = 0;
+                    doc.lastCompletedDay = today;
+                }
+
+                await User.updateOne(
+                    { username: req.user.username },
+                    {
+                        $set: {
+                            strea: doc.streak,
+                            lastCompletedDay: doc.lastCompletedDay,
+                        },
+                    }
+                );
+            }
+        });
+
         var redir = {
             redirect: "/home",
             message: "Already Logged In",
