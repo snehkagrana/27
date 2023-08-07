@@ -1897,11 +1897,8 @@ app.post("/server/savescore", authUser, (req, res) => {
             });
 
             const today = new Date().toISOString().split("T")[0];
-            if (!doc.lastCompletedDay || isNextDay(doc.lastCompletedDay)) {
+            if (isNextDay(doc.lastCompletedDay)) {
                 doc.streak++;
-                doc.lastCompletedDay = today;
-            } else {
-                doc.streak = 0;
                 doc.lastCompletedDay = today;
             }
 
